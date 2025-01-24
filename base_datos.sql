@@ -1,0 +1,1 @@
+CREATE TABLE User (id INT, username VARCHAR(24) PRIMARY KEY NOT NULL, password VARCHAR(16) NOT NULL, name TINYTEXT NOT NULL, lastName TINYTEXT, secondLastName TINYTEXT, email varchar(128) NOT NULL, enabled BOOLEAN);
