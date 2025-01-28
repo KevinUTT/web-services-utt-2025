@@ -10,26 +10,37 @@ Libro.init(
       type: DataTypes.STRING,
       allowNull: false
     },
-    nombre: {
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    autor_license: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    editorial: {
+        type: DataTypes.TEXT
+    },
+    pages: {
+        type: DataTypes.SMALLINT
+    },
+    year: {
+        type: DataTypes.SMALLINT,
+        allowNull: false
+    },
+    genre: {
+        type: DataTypes.TEXT
+    },
+    language: {
       type: DataTypes.TEXT,
       allowNull: false
     },
-    autor: {
-        type: DataTypes.STRING,
-        allowNull: false
+    format: {
+      type: DataTypes.TEXT
     },
-    año: {
-        type: DataTypes.SMALLINT,
-        allowNull: false
-    },
-    num_paginas: {
-        type: DataTypes.SMALLINT,
-        allowNull: false
-    },
-    editorial: {
-        type: DataTypes.TEXT,
-        allowNull: false
-    },
+    sinopsis: {
+      type: DataTypes.TEXT
+    }
   },
   {
     sequelize: MySQL.getSequelize,
