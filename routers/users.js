@@ -29,26 +29,6 @@ router.post('/register', async (req, res) => {
     }
 
     //Enviar el correo
-    const axios = require('axios');
-    const datos_correo = {
-        from: "Servicio de registro <uttorreon2025@gmail.com>",
-        to: `${datos_usuario.name} ${datos_usuario.lastName} <${datos_usuario.email}>`,
-        subject: "Registro de usuario",
-        date: (new Date()).toUTCString(),
-        messageId: "<uttorreon2025@gmail.com>",
-        message: `Hola ${datos_usuario.username} :) - ¡Tu registro ha sido exitoso!`
-    };
-    const formato_correo = 
-`From: ${datos_correo.from} 
-To: ${datos_correo.to} 
-Subject: ${datos_correo.subject} 
-Date: ${datos_correo.date} 
-Message-ID: ${datos_correo.messageId}
-
-${datos_correo.message}`;
-
-    const API_KEY = "KEY";
-    const TOKEN = "TOKEN";
 
     try {
         await axios.post('https://gmail.googleapis.com/gmail/v1/users/me/messages/send?key=' + API_KEY,{

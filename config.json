@@ -6,5 +6,9 @@
         "password": "utt",
         "port": 3306,
         "db": "Libros"
+    },
+    "google_services": {
+        "api_key": "",
+        "token": ""
     }
 }
