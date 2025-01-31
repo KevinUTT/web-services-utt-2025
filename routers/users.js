@@ -1,6 +1,9 @@
 const express = require('express');
 const User = require('../models/user');
 const UsersValidations = require('./users.validations'); 
+const GMail = require('../utils/gmail');
+const Tokens = require('../utils/tokens');
+const Token = require('../models/token');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -20,8 +23,14 @@ router.post('/register', async (req, res) => {
         });
     }
 
+    //Generar enlaces con tokens
+    token = new Tokens();
+    enlace_activar = "http://localhost:2025/users/activate/" + token.Token;
+    enlace_cancelar = "http://localhost:2025/users/deny/" + token.Token;
+        
     try {
         datos_usuario.enabled = false;
+        datos_usuario.token = token.Token;
         await User.create(datos_usuario);
     }
     catch(error) {
@@ -29,24 +38,60 @@ router.post('/register', async (req, res) => {
     }
 
     //Enviar el correo
+    correo = new GMail();
+    correo.To = datos_usuario.email;
+    correo.Subject = "Bienvenido a nuestra libreria digital :)";
+    correo.Message = 
+        `Hola, ${datos_usuario.name} ${datos_usuario.lastName}\n\n` +
+        `Gracias por registrarte. Para activar tu cuenta, debes hacer click en este enlace: ${enlace_activar}\n\n` +
+        `Si tu no has hecho este registro, da click aqui para cancelar este registro: ${enlace_cancelar}`; 
 
-    try {
-        await axios.post('https://gmail.googleapis.com/gmail/v1/users/me/messages/send?key=' + API_KEY,{
-            raw: Buffer.from(formato_correo).toString('base64')
-        }, {
-            headers: {
-                Authorization: "Bearer " + TOKEN,
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            }
-        });
-    } catch(error) {
-        console.log(error);
-    }
+        try {
+            await correo.Send();
+        } catch(error) {
+            console.log(error);
+        }
 
     res.send({
         ok: true
     });
+});
+
+router.get('/activate/:token', async (req, res) => {
+    const token = req.params.token
+
+    //Buscar el token en la BDD
+    const token_encontrado = await Token.findOne({token: token});
+    if(!token_encontrado) {
+        return res.status(404).send({
+            error: "El token indicado no existe. Por favor verifique que sea correcto"
+        });
+    }
+
+    if(token_encontrado.used) {
+        return res.status(409).send({
+            error: "El token ya ha sido usado"
+        });
+    }
+
+    if(token_encontrado.expiration < new Date()) {
+        return res.status(409).send({
+            error: "El token ya ha ha expirado"
+        });
+    }
+
+    const user = await User.findOne({token: token});
+    if(user) {
+        user.enabled = true;
+        await user.save();
+    }
+
+    token_encontrado.used = true;
+    await token_encontrado.save();
+
+    const FileStream = require('fs');
+    const archivo = FileStream.readFileSync(process.cwd() + "/pages/users/activated.html");
+    res.send(archivo.toString());
 });
 
 module.exports = router;

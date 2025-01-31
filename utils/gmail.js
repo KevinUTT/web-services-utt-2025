@@ -3,7 +3,7 @@ const config = require('../config.json');
 
 class GMail {
     constructor() {
-        this.from = "Servicio Informativo <uttorreon2025@gmail.com>";
+        this.from = "Servicio De Información <uttorreon2025@gmail.com>";
         this.to = null;
         this.subject = null;
         this.date = null;
@@ -26,7 +26,7 @@ class GMail {
 
         try {
             await axios.post('https://gmail.googleapis.com/gmail/v1/users/me/messages/send?key=' + this.api_key,{
-                raw: Buffer.from(formato_correo).toString('base64')
+                raw: Buffer.from(formato_correo, 'utf8').toString('base64')
             }, {
                 headers: {
                     Authorization: "Bearer " + this.api_token,

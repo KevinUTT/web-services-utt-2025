@@ -30,6 +30,10 @@ User.init(
     enabled: {
         type: DataTypes.BOOLEAN,
         allowNull: false
+    },
+    token: {
+        type: DataTypes.STRING,
+        allowNull: false
     }
   },
   {
