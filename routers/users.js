@@ -7,6 +7,7 @@ const Token = require('../models/token');
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
+
     const datos_usuario = req.body;
     const validador = new UsersValidations();
     
@@ -16,7 +17,7 @@ router.post('/register', async (req, res) => {
     }
     
     //Buscar duplicados
-    const existe = await User.findOne({username: datos_usuario.username});
+    const existe = await User.findOne({ where: {username: datos_usuario.username} });
     if(existe) {
         return res.status(409).send({
             error: `El usuario ${datos_usuario.username} ya existe`
@@ -57,11 +58,21 @@ router.post('/register', async (req, res) => {
     });
 });
 
+router.get('/all', async (req, res) => {
+    const users = User.findAll();
+    res.send(users);
+    
+});
+
+router.get('/redirect', async (req, res) => {
+    res.redirect("https://www.google.com");
+})
+
 router.get('/activate/:token', async (req, res) => {
     const token = req.params.token
 
     //Buscar el token en la BDD
-    const token_encontrado = await Token.findOne({token: token});
+    const token_encontrado = await Token.findOne({ where: {token: token }});
     if(!token_encontrado) {
         return res.status(404).send({
             error: "El token indicado no existe. Por favor verifique que sea correcto"
@@ -80,7 +91,7 @@ router.get('/activate/:token', async (req, res) => {
         });
     }
 
-    const user = await User.findOne({token: token});
+    const user = await User.findOne({ where: {token: token}});
     if(user) {
         user.enabled = true;
         await user.save();
@@ -92,6 +103,21 @@ router.get('/activate/:token', async (req, res) => {
     const FileStream = require('fs');
     const archivo = FileStream.readFileSync(process.cwd() + "/pages/users/activated.html");
     res.send(archivo.toString());
+});
+
+router.get('/deny/:token', async (req, res) => {
+    const token = req.params.token
+
+    //Buscar el token en la BDD
+    const token_encontrado = await Token.findOne({ where: {token: token}});
+    if(token_encontrado) {
+        token_encontrado.used = true;
+        await token_encontrado.save();
+    }
+
+    res.send({
+        ok: true
+    });
 });
 
 module.exports = router;

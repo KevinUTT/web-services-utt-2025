@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({extended: true}))
+app.use(express.static(__dirname + "/http/public"))
 
 const usersRouter = require('./routers/users');
 app.use('/users', usersRouter);

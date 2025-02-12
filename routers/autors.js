@@ -13,7 +13,7 @@ router.post('/new', async (req, res)=> {
     }
 
     //verificar duplicados
-    const existe = await Autor.findOne({ license: autor_data.license });
+    const existe = await Autor.findOne({ where: { license: autor_data.license }});
     if(existe) {
         return res.status(409).send({
             error: `El autor con la licencia ${autor_data.license} ya existe`

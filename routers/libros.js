@@ -13,7 +13,7 @@ router.post('/new', async (req, res) => {
     }
 
     //verificar duplicados
-    const existe = await Libro.findOne({ ISBN: libro_data.ISBN});
+    const existe = await Libro.findOne({ where: {ISBN: libro_data.ISBN}});
     if(existe) {
         return res.status(409).send({
             error: `El libro con el ISBN ${libro_data.ISBN} ya existe`
