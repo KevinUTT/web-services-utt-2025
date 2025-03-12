@@ -120,4 +120,37 @@ router.get('/deny/:token', async (req, res) => {
     });
 });
 
+router.post('/login', async (req, res) => {
+    const user = req.body.username || "";
+    const password = req.body.password || "";
+
+    const userExiste = await User.findOne({
+        where: {
+            username: user,
+            password: password
+        }
+    });
+
+    if(!userExiste) {
+        return res.status(401).send({
+            error: "Usuario o contraseña incorrectos."
+        });
+    }
+
+    if(!userExiste.enabled) {
+        return res.status(403).send({
+            error: "Active su cuenta :)"
+        })
+    }
+
+    res.cookie("SSID", Buffer.from(userExiste.username).toString("base64"), {
+        sameSite: "none",
+        secure: false,
+        httpOnly: true,
+    });
+    res.send({
+        ok: true
+    });
+});
+
 module.exports = router;

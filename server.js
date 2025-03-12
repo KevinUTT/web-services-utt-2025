@@ -6,7 +6,8 @@ app.use(express.static(__dirname + "/http/public"))
 
 const cors = require('cors');
 app.use(cors({
-    origin: '*'
+    origin: 'http://localhost:8000',
+    credentials: true
 }))
 
 const usersRouter = require('./routers/users');

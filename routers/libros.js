@@ -33,6 +33,7 @@ router.post('/new', async (req, res) => {
 });
 
 router.get('/all', async (req, res) => {
+    const headers = req.headers["user-agent"];
     const libros = await Libro.findAll();
     res.send(libros);
 });
