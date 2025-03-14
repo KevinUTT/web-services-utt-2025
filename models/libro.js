@@ -40,6 +40,9 @@ Libro.init(
     },
     sinopsis: {
       type: DataTypes.TEXT
+    },
+    content: {
+      type: DataTypes.TEXT
     }
   },
   {

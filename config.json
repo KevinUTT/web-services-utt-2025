@@ -10,5 +10,8 @@
     "google_services": {
         "api_key": "",
         "token": ""
+    },
+    "deepseek": {
+        "token": ""
     }
 }
