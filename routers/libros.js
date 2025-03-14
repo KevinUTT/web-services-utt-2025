@@ -50,9 +50,7 @@ router.post('/ai/new', async (req, res) => {
     json.autor_license = json_autor.license;
     const new_libro = await Libro.create(json);
 
-    res.send({
-        ok: true
-    });
+    res.send(json);
 
 });
 
