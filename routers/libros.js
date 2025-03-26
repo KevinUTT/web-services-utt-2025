@@ -54,7 +54,7 @@ router.post('/ai/new', async (req, res) => {
     }
 
 
-    DS.Prompt = "Genera un libro de texto, donde debes poner el contenido en un JSON; tu respuesta no debe incluir nada más que solo el JSON con los siguientes campos: 'ISBN' es un texto alfanumérico de entre 16 caracteres sin guiones ni espacios super aleatorio, con mayusculas y minúsculas; trata de hacer diferente cada vez, 'title' es el campo que contien el título de el libro ficticio, 'editorial' es una editorial ficticia para el libro, 'pages' el número de páginas, 'year' es un año real no mayor al actual, 'genre' es el género del libro ficticio, 'language' es el idioma del libro ficticio, 'format' puede ser entre PDF, DOC, TXT, FISICO o COPIA, 'sinopsis' es la sinopsis de tu libro ficticio, 'content' es el contenido del libro que debe ser un texto que coincida con las características anteriores";
+    DS.Prompt = "Genera un libro de texto, donde debes poner el contenido en un JSON; tu respuesta no debe incluir nada más que solo el JSON con los siguientes campos: 'ISBN' es un texto alfanumérico de 16 caracteres sin guiones ni espacios super aleatorio, con mayusculas y minúsculas; trata de hacer diferente cada vez, 'title' es el campo que contien el título de el libro ficticio, 'editorial' es una editorial ficticia para el libro, 'pages' el número de páginas, 'year' es un año real no mayor al actual, 'genre' es el género del libro ficticio, 'language' es el idioma del libro ficticio, 'format' puede ser entre PDF, DOC, TXT, FISICO o COPIA, 'sinopsis' es la sinopsis de tu libro ficticio, 'content' es el contenido del libro que debe ser un texto que coincida con las características anteriores";
     const libro = await DS.SendRequest();
     let json = JSON.parse(libro.replace("```json", "").replace("```", ""));
     
@@ -81,6 +81,18 @@ router.get('/all', async (req, res) => {
         "SELECT * FROM Libro INNER JOIN Autor ON Libro.autor_license = Autor.license"
     );
     res.send(libros || []);
+});
+
+router.delete('/:ISBN', async (req, res) => {
+    await Libro.destroy({
+        where: {
+            ISBN: req.params.ISBN
+        }
+    });
+
+    res.send({
+        ok: true
+    });
 });
 
 module.exports = router;
